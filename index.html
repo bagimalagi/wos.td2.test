@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>WOS TD2 - Generator ostrzeżeń stałych</title>
     <style>
-        /* --- DEFINICJA ZMIENNYCH KOLORYSTYCZNYCH --- */
         :root {
-            /* Motyw JASNY (Domyślny) */
             --bg-body: #f9f9f9;
             --bg-container: #ffffff;
             --text-color: #000000;
@@ -19,7 +17,6 @@
             --btn-hover: #1565c0;
             --btn-text: #ffffff;
             
-            /* Tabela */
             --table-border: #000000;
             --th-bg: #e8e8e8;
             --station-header-bg: #fffacd;
@@ -27,7 +24,6 @@
         }
 
         body.dark-mode {
-            /* Motyw CIEMNY */
             --bg-body: #121212;
             --bg-container: #1e1e1e;
             --text-color: #e0e0e0;
@@ -39,14 +35,13 @@
             --btn-hover: #42a5f5;
             --btn-text: #000000;
 
-            /* Tabela Ciemna */
             --table-border: #555555;
             --th-bg: #333333;
-            --station-header-bg: #4a4a2a; /* Ciemny żółty/oliwkowy */
+            --station-header-bg: #4a4a2a; 
             --station-header-text: #e0e0e0;
         }
 
-        /* --- STYLOWANIE --- */
+       
         body { 
             font-family: Arial, Helvetica, sans-serif; 
             margin: 20px; 
@@ -93,7 +88,6 @@
         button:hover { background: var(--btn-hover); }
         button:disabled { background: #555; cursor: not-allowed; opacity: 0.7; }
 
-        /* Specjalny styl dla przycisku motywu */
         #theme-toggle-btn {
             position: absolute;
             top: 20px;
@@ -186,7 +180,6 @@
     const toggleBtn = document.getElementById('theme-toggle-btn');
     const body = document.body;
 
-    // Sprawdź zapisany motyw
     const savedTheme = localStorage.getItem('wos_theme');
     if (savedTheme === 'dark') {
         body.classList.add('dark-mode');
