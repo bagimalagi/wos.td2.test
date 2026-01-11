@@ -41,7 +41,6 @@
             --station-header-text: #e0e0e0;
         }
 
-       
         body { 
             font-family: Arial, Helvetica, sans-serif; 
             margin: 20px; 
@@ -59,7 +58,7 @@
             margin: 0 auto 30px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.15);
             transition: background 0.3s, border-color 0.3s;
-            position: relative; /* Dla pozycjonowania przycisku */
+            position: relative;
         }
         
         input, textarea, select { 
@@ -139,7 +138,6 @@
             body { margin: 0; background: white !important; color: black !important; }
             .container { border: none; box-shadow: none; padding: 0; margin: 0; background: white !important; }
             
-            /* Reset zmiennych dla druku - wymuszenie bieli i czerni */
             :root, body.dark-mode {
                 --text-color: black;
                 --text-heading: black;
@@ -213,21 +211,20 @@
             }
             const data = await response.json();
             
-            console.log('Pobrane dane z API:', data);
-
-            trainsData = data.trains
-            
-            console.log('Przetworzone dane pociągów:', trainsData);
-            const maszynisci = new Set();
+            trainsData = data.trains;
+            const maszynisciSet = new Set();
             trainsData.forEach(train => {
                 if (train.driverName) {
-                    maszynisci.add(train.driverName);
+                    maszynisciSet.add(train.driverName);
                 }
             });
 
-            console.log('Unikalni maszynisci:', maszynisci);
+            // Sortowanie alfabetyczne z obsługą polskich znaków
+            const sortedMaszynisci = Array.from(maszynisciSet).sort((a, b) => 
+                a.localeCompare(b, 'pl', { sensitivity: 'base' })
+            );
             
-            Array.from(maszynisci).sort().forEach(name => {
+            sortedMaszynisci.forEach(name => {
                 const option = document.createElement('option');
                 option.value = name;
                 option.textContent = name;
@@ -244,41 +241,32 @@
 
     function updateStacjeFromMaszynista() {
         const selectedDriver = document.getElementById('maszynista').value;
-        if (!selectedDriver) {
-            alert('Proszę wybrać maszynistę.');
-            return;
-        }
+        if (!selectedDriver) return;
 
         const train = trainsData.filter(t => t.driverName === selectedDriver).find(t => t.timetable?.path);
-        console.log('Wybrany pociąg maszynisty:', train);
         if (!train || !train.timetable?.path) {
             alert('Brak danych trasy dla wybranego maszynisty.');
             document.getElementById('maszynista').value = '';
             return;
         }
 
-
         const pathStations = train.timetable.path
             .split(',')
             .map(segment => segment.split('@')[0].trim())
             .filter(name => name.includes('.sc'))
             .map(name => {
-                // Wyciągnij nazwę stacji z formatu "Nazwa Stacji 12345678.sc"
                 const match = name.match(/^(.+?)\s+[0-9a-f]{8}\.sc$/);
                 return match ? match[1] : name;
-            })
-
-        console.log('Stacje z trasy pociągu:', pathStations);
+            });
 
         stations = pathStations.join(',');
         if(selectedDriver){
-            generujWOS()
+            generujWOS();
             document.getElementById('printButton').disabled = false;
         }
     }
 
     document.getElementById('maszynista').addEventListener('change', updateStacjeFromMaszynista);
-
     document.addEventListener('DOMContentLoaded', loadMaszynisci);
 
     function normalizuj(nazwa) {
@@ -290,12 +278,10 @@
         return km ? km.replace('.', ',') : '—';
     }
 
-     function generujWOS() {
+    function generujWOS() {
         const maszynista = document.getElementById("maszynista").value || "—";
         const input = stations.trim();
 
-        console.log('Generowanie WOS dla maszynisty:', maszynista);
-        console.log('Stacje do przetworzenia:', input);
         if (input.length === 0) {
             document.getElementById("wynik").innerHTML = '<p style="text-align:center; color: var(--text-color); margin-top:30px; font-size:14pt;"><b>Brak rozkładu jazdy</b></p>';
             return;
@@ -309,7 +295,6 @@
             Wykaz Ostrzeżeń Stałych<br>
             oraz prędkości drogowych
         </h1>
-
         <span style="float:right;">Godzina wydruku: <b>${new Date().toLocaleTimeString('pl-PL')}</b></span>
         <span><br><br></span>
         <span>Wygenerowano dla pociągu: <b>${trainsData.filter(t => t.driverName === maszynista).find(t => t.timetable?.path)?.trainNo || '—'}</b></span>
@@ -371,8 +356,8 @@
         }
 
         document.getElementById("wynik").innerHTML = html;
-}
-    window.generujWOS=generujWOS
+    }
+    window.generujWOS = generujWOS;
 </script>
 <span style="float: right;">© Blue & Kacper9</span>
 <span style="float: right; margin-right: 20px; font-size: 0.8em;">Dane pobierane za pośrednictwem <a href="https://stacjownik-td2.spythere.eu">https://stacjownik-td2.spythere.eu</a></span>
