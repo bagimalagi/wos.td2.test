@@ -215,7 +215,6 @@
     let trainsData = [];
     let stations = [];
     
-    // Mapy pomocnicze
     const nickToTrainMap = new Map();
     const trainToNickMap = new Map();
 
@@ -248,29 +247,24 @@
                 const train = maszynisciMap.get(name);
                 const trainNo = train.trainNo || "???";
 
-                // Główny Select
                 const option = document.createElement('option');
                 option.value = name;
                 option.textContent = `${name} | ${trainNo}`;
                 select.appendChild(option);
 
-                // Datalist: Nicki
                 const optNick = document.createElement('option');
                 optNick.value = name;
                 dlNicks.appendChild(optNick);
 
-                // Datalist: Numery pociągów
                 if (train.trainNo) {
-                    // NAPRAWA: Konwersja numeru na String, aby pasował do input type="text"
                     const trainNoStr = String(train.trainNo).trim();
 
                     const optTrain = document.createElement('option');
                     optTrain.value = trainNoStr;
-                    optTrain.label = name; 
+                    // USUNIĘTO: optTrain.label = name; - teraz wyświetla tylko numer
                     dlTrains.appendChild(optTrain);
 
                     nickToTrainMap.set(name, trainNoStr);
-                    // Klucz mapy musi być stringiem
                     trainToNickMap.set(trainNoStr, name);
                 }
             });
@@ -298,13 +292,10 @@
         }
     }
 
-    // --- LOGIKA WYSZUKIWANIA ---
-
     const searchNickInput = document.getElementById('search-nick');
     const searchTrainInput = document.getElementById('search-train');
     const mainSelect = document.getElementById('maszynista');
 
-    // 1. Szukanie po Nicku
     searchNickInput.addEventListener('input', (e) => {
         const val = e.target.value;
         if (nickToTrainMap.has(val)) {
@@ -314,9 +305,8 @@
         }
     });
 
-    // 2. Szukanie po Numerze Pociągu
     searchTrainInput.addEventListener('input', (e) => {
-        const val = e.target.value.trim(); // Trim usuwa przypadkowe spacje
+        const val = e.target.value.trim();
         if (trainToNickMap.has(val)) {
             const driverName = trainToNickMap.get(val);
             mainSelect.value = driverName;
@@ -330,8 +320,6 @@
         searchNickInput.value = "";
         searchTrainInput.value = "";
     });
-
-    // --- KONIEC LOGIKI WYSZUKIWANIA ---
 
     function updateStacjeFromMaszynista() {
         const selectedDriver = document.getElementById('maszynista').value;
@@ -433,7 +421,7 @@
         document.getElementById("wynik").innerHTML = html;
     }
 </script>
-<span style="float: right;">© Blue & Kacper9 & bagi2424</span>
-<span style="float: left;">Version: 1.0.0</span>
+<span style="float: right;">© Blue & Kacper9 & bagi2424</span><br><br>
+<span style="float: right;">version 1.0.0</span>
 </body>
 </html>
